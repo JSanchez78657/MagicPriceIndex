@@ -11,4 +11,13 @@ public class Purchase {
         this.quantity = quantity;
         this.card = card;
     }
+
+    @Override
+    public String toString() {
+        return quantity + " " + card.getName();
+    }
+
+    public String csvString() {
+        return quantity + "," + card.csvString();
+    }
 }

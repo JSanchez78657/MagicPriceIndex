@@ -18,8 +18,6 @@ public class CardService {
         return new Card(json);
     }
 
-//    public ArrayList<Card> getCards()
-
     private static String constructQuery(String name) {
         return "https://api.scryfall.com/cards/search?q=!\"" + name + "\" unique:prints not:digital";
     }

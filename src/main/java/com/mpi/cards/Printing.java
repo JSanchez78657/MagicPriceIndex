@@ -15,6 +15,11 @@ public class Printing {
 
     private static final NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
+    public Printing(String setName, String setSymbol) {
+        this.setName = setName;
+        this.setSymbol = setSymbol;
+    }
+
     public Printing(JSONObject json) {
         JSONObject prices = (JSONObject) json.get("prices");
         this.setName = (String) json.get("set_name");
@@ -37,6 +42,11 @@ public class Printing {
                 "\t\t\tprice=" + formatter.format(price) + ",\n" +
                 "\t\t\tpriceFoil=" + formatter.format(priceFoil) + "\n" +
                 "\t\t}";
+    }
+
+    public String csvString() {
+        NumberFormat f = NumberFormat.getCurrencyInstance();
+        return String.format("%s,%s,%s,%s,%s", setSymbol,setName,f.format(price),f.format(priceFoil),notes.toString().replace(',','/'));
     }
 
     private static ArrayList<String> extractNotes(JSONObject json) {

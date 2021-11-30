@@ -4,6 +4,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 
 public class Card {
     private String name;
@@ -12,6 +13,12 @@ public class Card {
     public Card(JSONObject json) {
         this.name = extractName(json);
         this.printings = new ArrayList<>(Printing.extractPrintings(json));
+    }
+
+    public Card(String name, Printing printing) {
+        this.name = name;
+        this.printings = new ArrayList<>();
+        this.printings.add(printing);
     }
 
     private static String extractName(JSONObject json) {
@@ -24,6 +31,30 @@ public class Card {
                 "\tname='" + name + "'\n" +
                 "\tprintings=" + printings +
                 "\n}";
+    }
+
+    public String csvString() {
+        StringBuilder builder = new StringBuilder();
+        Iterator<Printing> iterator = printings.iterator();
+        Printing hold;
+        double minPrice = Double.MAX_VALUE, maxPrice = 0;
+        double curMin, curMax;
+        builder.append(name).append(',');
+        while(iterator.hasNext()) {
+            hold = iterator.next();
+            curMin = Double.min(hold.getPrice(), hold.getPriceFoil());
+            curMax = Double.max(hold.getPrice(), hold.getPriceFoil());
+            //Cards with no listed price default to 0.
+            if(curMin > 0) minPrice = Double.min(minPrice, curMin);
+            maxPrice = Double.max(maxPrice, curMax);
+            builder.append(hold.csvString());
+            if(iterator.hasNext())
+                builder.append("\n,,");
+        }
+        //If there are no price listings, this makes sure the price isn't DoubleMax.
+        if(minPrice == Double.MAX_VALUE) minPrice = 0;
+        builder.append(",").append(minPrice).append(",").append(maxPrice);
+        return builder.toString();
     }
 
     public String getName() {

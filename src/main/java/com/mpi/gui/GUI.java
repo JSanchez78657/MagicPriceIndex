@@ -1,10 +1,14 @@
 package com.mpi.gui;
 
+import com.mpi.model.BuyList;
+
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.text.SimpleAttributeSet;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Iterator;
+import java.util.Locale;
 
 public class GUI {
 
@@ -58,6 +62,28 @@ public class GUI {
 
     public void display() {
         frame.setVisible(true);
+    }
+
+    public void showSheet(BuyList buyList) {
+        JFrame resultFrame = new JFrame("Results");
+//        JPanel resultPanel = new JPanel();
+        JTextPane resultPane = new JTextPane();
+        resultPane.setCharacterAttributes(new SimpleAttributeSet(), true);
+        resultPane.setText(buyList.csvString());
+        resultFrame.add(resultPane);
+        resultFrame.pack();
+        resultFrame.setVisible(true);
+    }
+
+    public String getCurrency() {
+        Iterator<AbstractButton> i = currencyGroup.getElements().asIterator();
+        AbstractButton hold;
+        while(i.hasNext()) {
+            hold = i.next();
+            if (hold.isSelected())
+                return hold.getText().toLowerCase();
+        }
+        return "err";
     }
 
     public void addSearchButtonListener(ActionListener listener) {

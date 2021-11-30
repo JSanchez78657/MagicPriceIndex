@@ -23,6 +23,7 @@ public class GUILIstener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         String list = gui.getText();
-        ArrayList<Card> cards = controller.getCards(list);
+        BuyList buyList = controller.getBuyList(list);
+        gui.showSheet(buyList);
     }
 }

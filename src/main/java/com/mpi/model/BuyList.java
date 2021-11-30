@@ -6,13 +6,27 @@ import java.util.ArrayList;
 
 public class BuyList {
 
-    ArrayList<Purchase> list = new ArrayList<Purchase>();
+    ArrayList<Purchase> purchaseList = new ArrayList<>();
 
     public void addPurchase(int quantity, Card card) {
-        list.add(new Purchase(quantity, card));
+        purchaseList.add(new Purchase(quantity, card));
     }
 
     public void addPurchase(Purchase purchase) {
-        list.add(purchase);
+        purchaseList.add(purchase);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        purchaseList.forEach(purchase -> builder.append(purchase).append("\n"));
+        return builder.toString();
+    }
+
+    public String csvString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("#,Name,Set Symbol,Set Name,Non-Foil,Foil,Notes,Min,Max");
+        purchaseList.forEach(purchase -> builder.append("\n").append(purchase.csvString()));
+        return builder.toString();
     }
 }
