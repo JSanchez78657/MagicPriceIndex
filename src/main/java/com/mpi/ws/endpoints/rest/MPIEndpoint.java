@@ -1,13 +1,11 @@
 package com.mpi.ws.endpoints.rest;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.mpi.cards.Card;
+import com.mpi.cards.CardService;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
-@RestController
 public class MPIEndpoint {
 
-    @RequestMapping("/")
-    public String hello() {
-        return "Hello World";
-    }
+
 }

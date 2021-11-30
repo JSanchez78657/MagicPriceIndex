@@ -1,21 +1,65 @@
 package com.mpi.cards;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.text.NumberFormat;
+import java.util.*;
+
 public class Printing {
     private String setName;
     private String setSymbol;
-    private String finish;
+    private ArrayList<String> notes;
     private double price;
     private double priceFoil;
 
+    private static final NumberFormat formatter = NumberFormat.getCurrencyInstance();
+
+    public Printing(JSONObject json) {
+        JSONObject prices = (JSONObject) json.get("prices");
+        this.setName = (String) json.get("set_name");
+        this.setSymbol = ((String) json.get("set")).toUpperCase();
+        this.notes = extractNotes(json);
+        if(!prices.isNull("usd"))
+            this.price = Double.parseDouble((String) prices.get("usd"));
+        if(!prices.isNull("usd_foil"))
+            this.priceFoil = Double.parseDouble((String) prices.get("usd_foil"));
+    }
+
+
+
     @Override
     public String toString() {
-        return "Printing{" +
-                "setName='" + setName + '\'' +
-                ", setSymbol='" + setSymbol + '\'' +
-                ", finish='" + finish + '\'' +
-                ", price=" + price +
-                ", priceFoil=" + priceFoil +
-                '}';
+        return  "\n\t\tPrinting {\n" +
+                "\t\t\tsetName='" + setName + "',\n" +
+                "\t\t\tsetSymbol='" + setSymbol + "',\n" +
+                "\t\t\tnotes=" + notes + ",\n" +
+                "\t\t\tprice=" + formatter.format(price) + ",\n" +
+                "\t\t\tpriceFoil=" + formatter.format(priceFoil) + "\n" +
+                "\t\t}";
+    }
+
+    private static ArrayList<String> extractNotes(JSONObject json) {
+        ArrayList<String> hold = new ArrayList<>();
+        String setType = (String) json.get("set_type");
+        if(!setType.equals("expansion"))
+            hold.add(setType);
+        if(json.has("frame_effects")) {
+            json.getJSONArray("frame_effects").forEach(effect -> {
+                if(!effect.equals("legendary"))
+                    hold.add((String) effect);
+            });
+        }
+        if((boolean) json.get("full_art"))
+            hold.add("fullart");
+        return hold;
+    }
+
+    public static ArrayList<Printing> extractPrintings(JSONObject json) {
+        ArrayList<Printing> printings = new ArrayList<>();
+        JSONArray data = json.getJSONArray("data");
+        data.forEach(p -> printings.add(new Printing((JSONObject) p)));
+        return printings;
     }
 
     public String getSetName() {
@@ -32,14 +76,6 @@ public class Printing {
 
     public void setSetSymbol(String setSymbol) {
         this.setSymbol = setSymbol;
-    }
-
-    public String getFinish() {
-        return finish;
-    }
-
-    public void setFinish(String finish) {
-        this.finish = finish;
     }
 
     public double getPrice() {
