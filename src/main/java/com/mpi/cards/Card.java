@@ -59,8 +59,8 @@ public class Card {
             prices = Arrays.asList(normal, foil, etched);
 
             curMin = prices.stream().min((o1, o2) -> {
-                if(o1 == 0.0) return o2.intValue();
-                if(o2 == 0.0) return o1.intValue();
+                if(o1 == 0.0) return 1;
+                if(o2 == 0.0) return -1;
                 return o1.compareTo(o2);
             }).get();
             curMax = prices.stream().max(Double::compareTo).get();
@@ -68,7 +68,7 @@ public class Card {
             if(curMax > max) max = curMax;
         }
         if(min == Double.MAX_VALUE) min = 0.0;
-        return formatter.format(min) + ',' + formatter.format(max);
+        return "\"" + formatter.format(min) + "\"" + ',' + "\"" + formatter.format(max) + "\"";
     }
 
     public String getName() {
