@@ -2,6 +2,7 @@ package com.mpi.model;
 
 import com.mpi.cards.Card;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 
 public class BuyList {
@@ -23,10 +24,10 @@ public class BuyList {
         return builder.toString();
     }
 
-    public String csvString() {
+    public String csvString(NumberFormat formatter) {
         StringBuilder builder = new StringBuilder();
-        builder.append("#,Name,Set Symbol,Set Name,Non-Foil,Foil,Notes,Min,Max");
-        purchaseList.forEach(purchase -> builder.append("\n").append(purchase.csvString()));
+        builder.append("#,Name,Set Symbol,Set Name,Non-Foil,Foil,Etched,Notes,Min,Max");
+        purchaseList.forEach(purchase -> builder.append("\n").append(purchase.csvString(formatter)));
         return builder.toString();
     }
 }

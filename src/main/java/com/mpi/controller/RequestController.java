@@ -7,11 +7,7 @@ import com.mpi.model.BuyList;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 public class RequestController {
 
@@ -27,6 +23,15 @@ public class RequestController {
         ArrayList<String> names = new ArrayList<>();
         ArrayList<Integer> quantities = new ArrayList<>();
         BuyList buyList = new BuyList();
+
+        Iterator<String> nameIterator;
+        Iterator<Exclusions> exclusionsIterator;
+        boolean exclude = false;
+        long timestamp;
+        long elapsedTime;
+        Card card;
+        String name;
+
         Arrays.stream(list.split("\n")).forEach(line -> {
             line = line.trim();
             //Makes sure that blank lines and commented lines aren't read.
@@ -47,10 +52,19 @@ public class RequestController {
                 quantities.add(quantity);
             }
         });
-        names.forEach(name -> {
-            long timestamp = System.currentTimeMillis();
-            long elapsedTime = 0L;
-            Card card;
+        nameIterator = names.iterator();
+        while(nameIterator.hasNext()) {
+            timestamp = System.currentTimeMillis();
+            elapsedTime = 0L;
+            name = nameIterator.next();
+            //Certain cards have A LOT of printings and are in A LOT of decks, so they are excluded.
+            exclusionsIterator = Arrays.stream(Exclusions.values()).iterator();
+            while(exclusionsIterator.hasNext() && !exclude)
+                exclude = exclusionsIterator.next().name().equals(name.toUpperCase());
+            if(exclude) {
+                exclude = false;
+                continue;
+            }
             //Scryfall requests a 75-100 ms delay between requests, I'm just playing it safe at 100.
             while(elapsedTime < 100) {
                 elapsedTime = System.currentTimeMillis() - timestamp;
@@ -63,7 +77,7 @@ public class RequestController {
                 System.out.println("Error, card not found.");
                 cards.add(new Card("CardNotFound", new Printing("ContactCreator", "CNF")));
             }
-        });
+        }
         for(int i = 0; i < cards.size(); ++i)
             buyList.addPurchase(quantities.get(i), cards.get(i));
         return buyList;

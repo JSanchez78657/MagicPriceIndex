@@ -2,9 +2,9 @@ package com.mpi.cards;
 
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
+import java.text.NumberFormat;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class Card {
     private String name;
@@ -33,28 +33,42 @@ public class Card {
                 "\n}";
     }
 
-    public String csvString() {
+    public String csvString(NumberFormat formatter) {
         StringBuilder builder = new StringBuilder();
         Iterator<Printing> iterator = printings.iterator();
         Printing hold;
-        double minPrice = Double.MAX_VALUE, maxPrice = 0;
-        double curMin, curMax;
-        builder.append(name).append(',');
+        builder.append("\"").append(name).append("\"").append(',');
         while(iterator.hasNext()) {
             hold = iterator.next();
-            curMin = Double.min(hold.getPrice(), hold.getPriceFoil());
-            curMax = Double.max(hold.getPrice(), hold.getPriceFoil());
-            //Cards with no listed price default to 0.
-            if(curMin > 0) minPrice = Double.min(minPrice, curMin);
-            maxPrice = Double.max(maxPrice, curMax);
-            builder.append(hold.csvString());
+            builder.append(hold.csvString(formatter));
             if(iterator.hasNext())
                 builder.append("\n,,");
         }
-        //If there are no price listings, this makes sure the price isn't DoubleMax.
-        if(minPrice == Double.MAX_VALUE) minPrice = 0;
-        builder.append(",").append(minPrice).append(",").append(maxPrice);
+        builder.append(",").append(getMinMaxPrice(formatter));
         return builder.toString();
+    }
+
+    private String getMinMaxPrice(NumberFormat formatter) {
+        double normal, foil, etched, max = 0.0, min = Double.MAX_VALUE, curMin, curMax;
+        List<Double> prices;
+        for(Printing p : printings) {
+            normal = p.getDoublePrice(formatter, "");
+            foil = p.getDoublePrice( formatter, "foil");
+            etched = p.getDoublePrice(formatter, "etched");
+
+            prices = Arrays.asList(normal, foil, etched);
+
+            curMin = prices.stream().min((o1, o2) -> {
+                if(o1 == 0.0) return o2.intValue();
+                if(o2 == 0.0) return o1.intValue();
+                return o1.compareTo(o2);
+            }).get();
+            curMax = prices.stream().max(Double::compareTo).get();
+            if(curMin > 0.0 && curMin < min) min = curMin;
+            if(curMax > max) max = curMax;
+        }
+        if(min == Double.MAX_VALUE) min = 0.0;
+        return formatter.format(min) + ',' + formatter.format(max);
     }
 
     public String getName() {

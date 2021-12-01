@@ -2,6 +2,8 @@ package com.mpi.model;
 
 import com.mpi.cards.Card;
 
+import java.text.NumberFormat;
+
 public class Purchase {
 
     private int quantity;
@@ -17,7 +19,7 @@ public class Purchase {
         return quantity + " " + card.getName();
     }
 
-    public String csvString() {
-        return quantity + "," + card.csvString();
+    public String csvString(NumberFormat formatter) {
+        return quantity + "," + card.csvString(formatter);
     }
 }

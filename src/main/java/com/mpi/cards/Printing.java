@@ -10,8 +10,7 @@ public class Printing {
     private String setName;
     private String setSymbol;
     private ArrayList<String> notes;
-    private double price;
-    private double priceFoil;
+    private HashMap<String, Double> prices;
 
     private static final NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
@@ -21,17 +20,11 @@ public class Printing {
     }
 
     public Printing(JSONObject json) {
-        JSONObject prices = (JSONObject) json.get("prices");
         this.setName = (String) json.get("set_name");
         this.setSymbol = ((String) json.get("set")).toUpperCase();
         this.notes = extractNotes(json);
-        if(!prices.isNull("usd"))
-            this.price = Double.parseDouble((String) prices.get("usd"));
-        if(!prices.isNull("usd_foil"))
-            this.priceFoil = Double.parseDouble((String) prices.get("usd_foil"));
+        this.prices = extractPrices((JSONObject) json.get("prices"));
     }
-
-
 
     @Override
     public String toString() {
@@ -39,14 +32,36 @@ public class Printing {
                 "\t\t\tsetName='" + setName + "',\n" +
                 "\t\t\tsetSymbol='" + setSymbol + "',\n" +
                 "\t\t\tnotes=" + notes + ",\n" +
-                "\t\t\tprice=" + formatter.format(price) + ",\n" +
-                "\t\t\tpriceFoil=" + formatter.format(priceFoil) + "\n" +
+                "\t\t\tprice=" + prices + ",\n" +
                 "\t\t}";
     }
 
-    public String csvString() {
-        NumberFormat f = NumberFormat.getCurrencyInstance();
-        return String.format("%s,%s,%s,%s,%s", setSymbol,setName,f.format(price),f.format(priceFoil),notes.toString().replace(',','/'));
+    public String csvString(NumberFormat formatter) {
+        return String.format("%s,%s,%s,%s,%s,%s", setSymbol,setName.replace(",", "\",\""),getPrice(formatter, ""), getPrice(formatter, "foil"), getPrice(formatter, "etched"),notes.toString().replace(',','/'));
+    }
+
+    public String getPrice(NumberFormat formatter, String type) {
+        String currency = formatter.getCurrency().toString().toLowerCase();
+        Double hold;
+        switch(type) {
+            case("foil") -> hold = prices.get(currency + "_foil");
+            case("etched") -> hold = prices.get(currency + "_etched");
+            default -> hold = prices.get(currency);
+        }
+        if(hold == null) hold = 0.0;
+        return formatter.format(hold.doubleValue()).replace(",",".");
+    }
+
+    public double getDoublePrice(NumberFormat formatter, String type) {
+        String currency = formatter.getCurrency().toString().toLowerCase();
+        Double hold;
+        switch(type) {
+            case("foil") -> hold = prices.get(currency + "_foil");
+            case("etched") -> hold = prices.get(currency + "_etched");
+            default -> hold = prices.get(currency);
+        }
+        if(hold == null) hold = 0.0;
+        return hold;
     }
 
     private static ArrayList<String> extractNotes(JSONObject json) {
@@ -72,6 +87,16 @@ public class Printing {
         return printings;
     }
 
+    private static HashMap<String, Double> extractPrices(JSONObject prices) {
+        HashMap<String, Double> ret = new HashMap<>();
+        Map<String, Object> hold = prices.toMap();
+        hold.forEach((K,V) -> {
+            if(V != null)
+                ret.put(K,Double.parseDouble((String) V));
+        });
+        return ret;
+    }
+
     public String getSetName() {
         return setName;
     }
@@ -86,21 +111,5 @@ public class Printing {
 
     public void setSetSymbol(String setSymbol) {
         this.setSymbol = setSymbol;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public double getPriceFoil() {
-        return priceFoil;
-    }
-
-    public void setPriceFoil(double priceFoil) {
-        this.priceFoil = priceFoil;
     }
 }

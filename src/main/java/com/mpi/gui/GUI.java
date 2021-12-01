@@ -7,6 +7,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.text.SimpleAttributeSet;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.text.NumberFormat;
 import java.util.Iterator;
 import java.util.Locale;
 
@@ -69,7 +70,7 @@ public class GUI {
 //        JPanel resultPanel = new JPanel();
         JTextPane resultPane = new JTextPane();
         resultPane.setCharacterAttributes(new SimpleAttributeSet(), true);
-        resultPane.setText(buyList.csvString());
+        resultPane.setText(buyList.csvString(getFormat(getCurrency())));
         resultFrame.add(resultPane);
         resultFrame.pack();
         resultFrame.setVisible(true);
@@ -84,6 +85,14 @@ public class GUI {
                 return hold.getText().toLowerCase();
         }
         return "err";
+    }
+
+    public NumberFormat getFormat(String currency) {
+        switch(currency) {
+            case("usd") -> { return NumberFormat.getCurrencyInstance(Locale.US); }
+            case ("euro") -> { return NumberFormat.getCurrencyInstance(Locale.GERMANY); }
+        }
+        return NumberFormat.getCurrencyInstance(Locale.US);
     }
 
     public void addSearchButtonListener(ActionListener listener) {
