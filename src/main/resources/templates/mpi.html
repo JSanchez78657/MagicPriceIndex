@@ -1,0 +1,19 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Magic Price Index</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+  <body>
+    <h1>Magic Price Index</h1>
+    <form action="#" th:action="@{/mpi}" th:object="${mpi}" method="post">
+      <textarea name="input-box" rows="50" cols="80" th:field="*{textArea}"></textarea>
+      <input class="radio-button" type="radio" id="USD" name="currency" checked="checked" value="USD" th:field="*{currency}">
+      <label class="radio-label" for="USD">USD</label>
+      <input class="radio-button" type="radio" id="EUR" name="currency" value="EUR" th:field="*{currency}">
+      <label class="radio-label" for="EUR">EUR</label><br>
+      <input type="submit" value="Submit"/>
+    </form>
+  </body>
+</html>

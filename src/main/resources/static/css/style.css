@@ -1,0 +1,28 @@
+textarea {
+    display:block;
+    margin-left:auto;
+    margin-right:auto;
+    margin-bottom: 5px;
+}
+body {
+    background-color: gray;
+    align-content: center;
+}
+h1 {
+    text-align:center;
+    font-family:Dungeon,serif;
+}
+form {
+    text-align: center;
+}
+button {
+    margin-top:5px;
+}
+.radio-label {
+    display:inline-block;
+    vertical-align: top;
+}
+.radio-button {
+    display:inline-block;
+    vertical-align: top;
+}

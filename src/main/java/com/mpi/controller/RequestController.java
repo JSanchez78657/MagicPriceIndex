@@ -7,6 +7,16 @@ import com.mpi.model.BuyList;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import javax.swing.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.text.NumberFormat;
 import java.util.*;
 
 public class RequestController {
@@ -81,5 +91,35 @@ public class RequestController {
         for(int i = 0; i < cards.size(); ++i)
             buyList.addPurchase(quantities.get(i), cards.get(i));
         return buyList;
+    }
+
+    public void saveFile(BuyList buyList, String currency) {
+        JFrame parentFrame = new JFrame();
+
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Choose file location");
+
+        int userSelection = fileChooser.showSaveDialog(parentFrame);
+
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            try {
+                Path filePath = (fileToSave.getPath().endsWith(".csv")) ? fileToSave.toPath() : Paths.get(fileToSave.getPath() + ".csv");
+                BufferedWriter writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8, StandardOpenOption.CREATE);
+                writer.write(buyList.csvString(getFormat(currency)));
+                writer.flush();
+                writer.close();
+            } catch (IOException e) {
+                System.out.println("Failed to save");
+            }
+        }
+    }
+
+    public NumberFormat getFormat(String currency) {
+        switch(currency) {
+            case("usd") -> { return NumberFormat.getCurrencyInstance(Locale.US); }
+            case ("euro") -> { return NumberFormat.getCurrencyInstance(Locale.GERMANY); }
+        }
+        return NumberFormat.getCurrencyInstance(Locale.US);
     }
 }

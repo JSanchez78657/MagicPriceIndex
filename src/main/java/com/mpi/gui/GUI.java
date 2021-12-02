@@ -7,6 +7,14 @@ import javax.swing.border.TitledBorder;
 import javax.swing.text.SimpleAttributeSet;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.text.NumberFormat;
 import java.util.Iterator;
 import java.util.Locale;
@@ -65,17 +73,6 @@ public class GUI {
         frame.setVisible(true);
     }
 
-    public void showSheet(BuyList buyList) {
-        JFrame resultFrame = new JFrame("Results");
-//        JPanel resultPanel = new JPanel();
-        JTextPane resultPane = new JTextPane();
-        resultPane.setCharacterAttributes(new SimpleAttributeSet(), true);
-        resultPane.setText(buyList.csvString(getFormat(getCurrency())));
-        resultFrame.add(resultPane);
-        resultFrame.pack();
-        resultFrame.setVisible(true);
-    }
-
     public String getCurrency() {
         Iterator<AbstractButton> i = currencyGroup.getElements().asIterator();
         AbstractButton hold;
@@ -85,14 +82,6 @@ public class GUI {
                 return hold.getText().toLowerCase();
         }
         return "err";
-    }
-
-    public NumberFormat getFormat(String currency) {
-        switch(currency) {
-            case("usd") -> { return NumberFormat.getCurrencyInstance(Locale.US); }
-            case ("euro") -> { return NumberFormat.getCurrencyInstance(Locale.GERMANY); }
-        }
-        return NumberFormat.getCurrencyInstance(Locale.US);
     }
 
     public void addSearchButtonListener(ActionListener listener) {
