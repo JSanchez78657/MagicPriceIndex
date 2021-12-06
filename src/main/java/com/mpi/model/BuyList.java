@@ -13,10 +13,6 @@ public class BuyList {
         purchaseList.add(new Purchase(quantity, card));
     }
 
-    public void addPurchase(Purchase purchase) {
-        purchaseList.add(purchase);
-    }
-
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();

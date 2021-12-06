@@ -2,6 +2,9 @@ package com.mpi.controller;
 
 import com.mpi.model.BuyList;
 import com.mpi.model.MPI;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,11 +21,18 @@ public class HTMLController {
     }
 
     @PostMapping("/mpi")
-    public void submitList(@ModelAttribute MPI mpi, Model model) {
+    public ResponseEntity<String> submitList(@ModelAttribute MPI mpi, Model model) {
         RequestController controller = new RequestController();
         BuyList buyList = controller.getBuyList(mpi.getTextArea());
-        controller.saveFile(buyList, mpi.getCurrency());
+        HttpHeaders headers = new HttpHeaders();
+        String csv = buyList.csvString(controller.getFormat(mpi.getCurrency()));
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=buylist.csv");
         model.addAttribute("mpi", new MPI());
-//        return "mpi";
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .contentLength(csv.length())
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(csv);
     }
 }

@@ -21,6 +21,6 @@ public class GUIListener implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         String list = gui.getText();
         BuyList buyList = controller.getBuyList(list);
-        controller.saveFile(buyList, gui.getCurrency());
+        controller.saveFileDialogue(buyList, gui.getCurrency());
     }
 }

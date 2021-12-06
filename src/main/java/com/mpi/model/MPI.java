@@ -2,7 +2,7 @@ package com.mpi.model;
 
 public class MPI {
 
-    private String currency;
+    private String currency = "USD";
     private String textArea;
 
     public String getCurrency() {

@@ -6,8 +6,8 @@ import java.text.NumberFormat;
 
 public class Purchase {
 
-    private int quantity;
-    private Card card;
+    private final int quantity;
+    private final Card card;
 
     public Purchase(int quantity, Card card) {
         this.quantity = quantity;

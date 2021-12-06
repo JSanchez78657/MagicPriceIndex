@@ -1,47 +1,28 @@
 package com.mpi.gui;
 
-import com.mpi.model.BuyList;
-
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import javax.swing.text.SimpleAttributeSet;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.text.NumberFormat;
 import java.util.Iterator;
-import java.util.Locale;
 
 public class GUI {
 
-    private JFrame frame;
-    private JPanel mainPanel;
-    private JPanel buttonPanel;
-    private JPanel radioButtonPanel;
-    private JTextArea textArea;
-    private JScrollPane scrollPane;
-    private JButton searchButton;
-    private ButtonGroup currencyGroup;
-    private JRadioButton usdRadioButton;
-    private JRadioButton euroRadioButton;
+    private final JFrame frame;
+    private final JTextArea textArea;
+    private final JButton searchButton;
+    private final ButtonGroup currencyGroup;
 
     public GUI() {
         this.frame = new JFrame("MagicPriceIndex");
-        this.mainPanel = new JPanel();
-        this.buttonPanel = new JPanel();
-        this.radioButtonPanel = new JPanel();
+        JPanel mainPanel = new JPanel();
+        JPanel buttonPanel = new JPanel();
+        JPanel radioButtonPanel = new JPanel();
         this.textArea  = new JTextArea();
-        this.scrollPane = new JScrollPane(textArea);
+        JScrollPane scrollPane = new JScrollPane(textArea);
         this.searchButton = new JButton("Search");
-        this.usdRadioButton = new JRadioButton("USD");
-        this.euroRadioButton = new JRadioButton("Euro");
+        JRadioButton usdRadioButton = new JRadioButton("USD");
+        JRadioButton euroRadioButton = new JRadioButton("Euro");
         this.currencyGroup = new ButtonGroup();
 
         textArea.setRows(20);

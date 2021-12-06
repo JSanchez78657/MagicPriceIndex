@@ -17,7 +17,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.text.NumberFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Locale;
 
 public class RequestController {
 
@@ -93,7 +96,7 @@ public class RequestController {
         return buyList;
     }
 
-    public void saveFile(BuyList buyList, String currency) {
+    public void saveFileDialogue(BuyList buyList, String currency) {
         JFrame parentFrame = new JFrame();
 
         JFileChooser fileChooser = new JFileChooser();
